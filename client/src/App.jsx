@@ -1,0 +1,91 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Spinner } from './components/ui';
+
+// Pages
+import Landing      from './pages/Landing';
+import { Login, Register } from './pages/Auth';
+import Dashboard    from './pages/student/Dashboard';
+import SkillsGoals  from './pages/student/Skills';
+import Projects     from './pages/student/Projects';
+import Profile      from './pages/student/Profile';
+import FacultyDashboard from './pages/staff/FacultyDashboard';
+import AdminDashboard   from './pages/staff/AdminDashboard';
+import Leaderboard   from './pages/shared/Leaderboard';
+import Opportunities from './pages/shared/Opportunities';
+import Notifications from './pages/shared/Notifications';
+import Analytics     from './pages/shared/Analytics';
+import Settings      from './pages/shared/Settings';
+
+const LoadingScreen = () => (
+  <div className="flex flex-col items-center justify-center h-screen bg-[#060d1f] gap-4">
+    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo to-cyan flex items-center justify-center text-xl">⬡</div>
+    <Spinner size={28} />
+  </div>
+);
+
+const PrivateRoute = ({ children, roles }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (!user)   return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
+  return children;
+};
+
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user) {
+    const dest = user.role === 'student' ? '/dashboard' : user.role === 'faculty' ? '/faculty' : '/admin';
+    return <Navigate to={dest} replace />;
+  }
+  return children;
+};
+
+const NotFound = () => (
+  <div className="flex flex-col items-center justify-center h-screen bg-[#060d1f] gap-4 text-center px-6">
+    <div className="text-6xl">🌌</div>
+    <h1 className="text-2xl font-extrabold">Page not found</h1>
+    <a href="/" className="text-indigo-2 hover:underline text-sm mt-2">← Back to home</a>
+  </div>
+);
+
+const toastOptions = {
+  style: { background:'#0b1630', color:'#f1f5f9', border:'1px solid #1e2d4a', fontSize:13, fontFamily:"'Space Grotesk',sans-serif", borderRadius:10 },
+  success: { iconTheme: { primary:'#10b981', secondary:'#0b1630' } },
+  error:   { iconTheme: { primary:'#ef4444', secondary:'#0b1630' } },
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Toaster position="top-right" toastOptions={toastOptions} />
+        <Routes>
+          <Route path="/"         element={<Landing />} />
+          <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+
+          <Route path="/dashboard" element={<PrivateRoute roles={['student']}><Dashboard /></PrivateRoute>} />
+          <Route path="/profile"   element={<PrivateRoute roles={['student']}><Profile /></PrivateRoute>} />
+          <Route path="/skills"    element={<PrivateRoute roles={['student']}><SkillsGoals /></PrivateRoute>} />
+          <Route path="/projects"  element={<PrivateRoute roles={['student']}><Projects /></PrivateRoute>} />
+
+          <Route path="/faculty"  element={<PrivateRoute roles={['faculty','admin']}><FacultyDashboard /></PrivateRoute>} />
+          <Route path="/students" element={<PrivateRoute roles={['faculty','admin']}><FacultyDashboard /></PrivateRoute>} />
+          <Route path="/admin"    element={<PrivateRoute roles={['admin']}><AdminDashboard /></PrivateRoute>} />
+
+          <Route path="/leaderboard"   element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+          <Route path="/opportunities" element={<PrivateRoute><Opportunities /></PrivateRoute>} />
+          <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+          <Route path="/analytics"     element={<PrivateRoute><Analytics /></PrivateRoute>} />
+          <Route path="/settings"      element={<PrivateRoute><Settings /></PrivateRoute>} />
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}

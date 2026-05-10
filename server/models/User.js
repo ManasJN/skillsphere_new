@@ -1,0 +1,120 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+// ── Sub-schemas ────────────────────────────────────────────────────────────────
+const socialLinksSchema = new mongoose.Schema({
+  linkedin:   { type: String, default: '' },
+  github:     { type: String, default: '' },
+  leetcode:   { type: String, default: '' },
+  codeforces: { type: String, default: '' },
+  portfolio:  { type: String, default: '' },
+}, { _id: false });
+
+const codingStatsSchema = new mongoose.Schema({
+  leetcodeSolved:    { type: Number, default: 0 },
+  leetcodeEasy:      { type: Number, default: 0 },
+  leetcodeMedium:    { type: Number, default: 0 },
+  leetcodeHard:      { type: Number, default: 0 },
+  codeforcesRating:  { type: Number, default: 0 },
+  codeforcesMaxRating: { type: Number, default: 0 },
+  githubContributions: { type: Number, default: 0 },
+  githubRepos:       { type: Number, default: 0 },
+  contestsParticipated: { type: Number, default: 0 },
+  lastUpdated:       { type: Date, default: Date.now },
+}, { _id: false });
+
+// ── Main User Schema ───────────────────────────────────────────────────────────
+const userSchema = new mongoose.Schema({
+  // ── Identity ────────────────────────────────────────────────────────────────
+  name:       { type: String, required: [true, 'Name is required'], trim: true, maxlength: 100 },
+  email:      { type: String, required: [true, 'Email is required'], unique: true, lowercase: true, trim: true,
+                match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/, 'Please enter a valid email'] },
+  password:   { type: String, required: [true, 'Password is required'], minlength: 8, select: false },
+  role:       { type: String, enum: ['student', 'faculty', 'admin'], default: 'student' },
+  avatar:     { type: String, default: '' },
+
+  // ── Academic (Students) ──────────────────────────────────────────────────────
+  department: { type: String, enum: ['CSE', 'ECE', 'IT', 'MECH', 'CIVIL', 'EEE', 'OTHER'], default: 'CSE' },
+  semester:   { type: Number, min: 1, max: 8 },
+  rollNumber: { type: String, unique: true, sparse: true },
+  cgpa:       { type: Number, min: 0, max: 10, default: 0 },
+  batch:      { type: String }, // e.g. "2021-2025"
+  section:    { type: String },
+
+  // ── Profile ──────────────────────────────────────────────────────────────────
+  bio:        { type: String, maxlength: 500, default: '' },
+  phone:      { type: String },
+  resumeUrl:  { type: String, default: '' },
+  socialLinks: { type: socialLinksSchema, default: () => ({}) },
+
+  // ── Aspiration ───────────────────────────────────────────────────────────────
+  aspiration: {
+    type: String,
+    enum: ['Placements', 'GATE', 'Higher Studies', 'Startup', 'Research', 'Government', 'Freelancing', 'Not decided'],
+    default: 'Not decided',
+  },
+
+  // ── Gamification ─────────────────────────────────────────────────────────────
+  xpPoints:     { type: Number, default: 0 },
+  level:        { type: Number, default: 1 },
+  streakDays:   { type: Number, default: 0 },
+  lastActiveAt: { type: Date, default: Date.now },
+
+  // ── Coding Stats ─────────────────────────────────────────────────────────────
+  codingStats: { type: codingStatsSchema, default: () => ({}) },
+
+  // ── Meta ─────────────────────────────────────────────────────────────────────
+  isActive:    { type: Boolean, default: true },
+  isVerified:  { type: Boolean, default: false },
+  college:     { type: String, default: 'NIT Silchar' },
+  joinedAt:    { type: Date, default: Date.now },
+
+  // ── Faculty specific ─────────────────────────────────────────────────────────
+  designation: { type: String }, // "Assistant Professor", "HOD" etc.
+  subjects:    [{ type: String }],
+  mentoring:   [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // students under mentorship
+
+}, { timestamps: true });
+
+// ── Indexes ───────────────────────────────────────────────────────────────────
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1, department: 1 });
+userSchema.index({ xpPoints: -1 });
+userSchema.index({ 'codingStats.leetcodeSolved': -1 });
+
+// ── Pre-save: hash password ───────────────────────────────────────────────────
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const salt = await bcrypt.genSalt(12);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// ── Pre-save: auto-calculate XP level ────────────────────────────────────────
+userSchema.pre('save', function (next) {
+  // Level thresholds: level n requires n*500 XP
+  this.level = Math.floor(this.xpPoints / 500) + 1;
+  next();
+});
+
+// ── Instance Methods ──────────────────────────────────────────────────────────
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.toPublicJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  delete obj.__v;
+  return obj;
+};
+
+// ── Virtual: full coding score (for leaderboard) ──────────────────────────────
+userSchema.virtual('codingScore').get(function () {
+  const s = this.codingStats;
+  return (s.leetcodeSolved * 10) + Math.floor(s.codeforcesRating / 10) + (s.githubContributions * 2);
+});
+
+userSchema.set('toJSON', { virtuals: true });
+
+module.exports = mongoose.model('User', userSchema);
