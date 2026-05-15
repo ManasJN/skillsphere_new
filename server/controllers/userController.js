@@ -4,6 +4,91 @@ const Goal = require('../models/Goal');
 const Project = require('../models/Project');
 const { awardXP } = require('../utils/xp');
 
+const cleanHandle = (value = '') => value.trim().replace(/^@/, '');
+
+const getGitHubStats = async (username) => {
+  const headers = { 'user-agent': 'SkillSphere' };
+  const [profileRes, reposRes] = await Promise.all([
+    fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, { headers }),
+    fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`, { headers }),
+  ]);
+
+  if (profileRes.status === 404) return null;
+  if (!profileRes.ok || !reposRes.ok) throw new Error('GitHub did not respond successfully');
+
+  const profile = await profileRes.json();
+  const repos = await reposRes.json();
+  const publicRepos = Array.isArray(repos) ? repos.filter(repo => !repo.fork) : [];
+  const totalStars = publicRepos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+  const languages = publicRepos.reduce((acc, repo) => {
+    if (repo.language) acc[repo.language] = (acc[repo.language] || 0) + 1;
+    return acc;
+  }, {});
+  const topLanguages = Object.entries(languages)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([name, count]) => ({ name, count }));
+
+  return {
+    username: profile.login,
+    avatarUrl: profile.avatar_url,
+    profileUrl: profile.html_url,
+    publicRepos: profile.public_repos || 0,
+    followers: profile.followers || 0,
+    following: profile.following || 0,
+    totalStars,
+    topLanguages,
+  };
+};
+
+const getLeetCodeStats = async (username) => {
+  const query = `
+    query userProfile($username: String!) {
+      matchedUser(username: $username) {
+        username
+        submitStatsGlobal {
+          acSubmissionNum {
+            difficulty
+            count
+          }
+        }
+      }
+      userContestRanking(username: $username) {
+        attendedContestsCount
+      }
+    }
+  `;
+
+  const response = await fetch('https://leetcode.com/graphql', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      referer: 'https://leetcode.com',
+    },
+    body: JSON.stringify({ query, variables: { username } }),
+  });
+
+  if (!response.ok) throw new Error('LeetCode did not respond successfully');
+  const body = await response.json();
+  const matchedUser = body?.data?.matchedUser;
+  if (!matchedUser) return null;
+
+  const counts = matchedUser.submitStatsGlobal?.acSubmissionNum || [];
+  const byDifficulty = counts.reduce((acc, item) => {
+    acc[item.difficulty] = item.count;
+    return acc;
+  }, {});
+
+  return {
+    username: matchedUser.username,
+    leetcodeSolved: byDifficulty.All || 0,
+    leetcodeEasy: byDifficulty.Easy || 0,
+    leetcodeMedium: byDifficulty.Medium || 0,
+    leetcodeHard: byDifficulty.Hard || 0,
+    contestsParticipated: body?.data?.userContestRanking?.attendedContestsCount || 0,
+  };
+};
+
 // ── @route  GET /api/users ────────────────────────────────────────────────────
 // ── @access Faculty, Admin
 const getAllUsers = async (req, res, next) => {
@@ -73,7 +158,7 @@ const updateUser = async (req, res, next) => {
   try {
     // Fields a user is allowed to update themselves
     const allowed = ['name','bio','phone','semester','cgpa','aspiration',
-                     'socialLinks','resumeUrl','avatar','department','rollNumber','batch','section'];
+                     'socialLinks','platformProfiles','resumeUrl','avatar','department','rollNumber','batch','section'];
 
     // Admin can also update role, isActive, etc.
     if (['admin'].includes(req.user.role)) {
@@ -144,6 +229,182 @@ const updateCodingStats = async (req, res, next) => {
 
 // ── @route  DELETE /api/users/:id ─────────────────────────────────────────────
 // ── @access Admin
+const importLeetCodeStats = async (req, res, next) => {
+  try {
+    const username = cleanHandle(req.body.username);
+    if (!username) {
+      return res.status(400).json({ success: false, message: 'LeetCode username is required' });
+    }
+
+    const stats = await getLeetCodeStats(username);
+    if (!stats) {
+      return res.status(404).json({ success: false, message: 'LeetCode user not found' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const prev = user.codingStats.leetcodeSolved || 0;
+
+    if (!user.platformProfiles) user.platformProfiles = {};
+    if (!user.socialLinks) user.socialLinks = {};
+    user.platformProfiles.leetcode = stats.username;
+    user.socialLinks.leetcode = `https://leetcode.com/${stats.username}`;
+    Object.assign(user.codingStats, {
+      leetcodeSolved: stats.leetcodeSolved,
+      leetcodeEasy: stats.leetcodeEasy,
+      leetcodeMedium: stats.leetcodeMedium,
+      leetcodeHard: stats.leetcodeHard,
+      contestsParticipated: Math.max(user.codingStats.contestsParticipated || 0, stats.contestsParticipated),
+      lastUpdated: new Date(),
+    });
+
+    const newSolved = stats.leetcodeSolved - prev;
+    if (newSolved > 0) user.xpPoints += newSolved * 10;
+
+    await user.save();
+
+    const { checkAchievements } = require('../utils/xp');
+    const newAchievements = await checkAchievements(user._id);
+    const freshUser = await User.findById(user._id).select('-password');
+
+    res.json({ success: true, data: freshUser, imported: stats, newAchievements });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const importGitHubStats = async (req, res, next) => {
+  try {
+    const username = cleanHandle(req.body.username);
+    if (!username) {
+      return res.status(400).json({ success: false, message: 'GitHub username is required' });
+    }
+
+    const stats = await getGitHubStats(username);
+    if (!stats) {
+      return res.status(404).json({ success: false, message: 'GitHub user not found' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (!user.platformProfiles) user.platformProfiles = {};
+    if (!user.socialLinks) user.socialLinks = {};
+    user.platformProfiles.github = stats.username;
+    user.socialLinks.github = stats.profileUrl;
+    user.codingStats.githubRepos = stats.publicRepos;
+    user.codingStats.lastUpdated = new Date();
+
+    await user.save();
+    const freshUser = await User.findById(user._id).select('-password');
+
+    res.json({ success: true, data: freshUser, imported: stats });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const addCertification = async (req, res, next) => {
+  try {
+    const { title, provider, credentialId, credentialUrl, issuedAt, expiresAt, notes } = req.body;
+    if (!title || !provider) {
+      return res.status(400).json({ success: false, message: 'Title and provider are required' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          certifications: {
+            title,
+            provider,
+            credentialId,
+            credentialUrl,
+            issuedAt: issuedAt || undefined,
+            expiresAt: expiresAt || undefined,
+            notes,
+            fileUrl: req.file ? `/uploads/certifications/${req.file.filename}` : '',
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    await awardXP(user._id, 40, 'Added certification');
+
+    const freshUser = await User.findById(user._id).select('-password');
+    res.status(201).json({ success: true, data: freshUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteCertification = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { certifications: { _id: req.params.certificationId } } },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, data: user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const addShowcaseItem = async (req, res, next) => {
+  try {
+    const { title, category, platform, url, description } = req.body;
+    if (!title) {
+      return res.status(400).json({ success: false, message: 'Showcase title is required' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          showcaseItems: {
+            title,
+            category,
+            platform,
+            url,
+            description,
+            fileUrl: req.file ? `/uploads/showcase/${req.file.filename}` : '',
+          },
+        },
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    await awardXP(user._id, 60, 'Added showcase work');
+
+    const freshUser = await User.findById(user._id).select('-password');
+    res.status(201).json({ success: true, data: freshUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteShowcaseItem = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { showcaseItems: { _id: req.params.showcaseId } } },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.json({ success: true, data: user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
@@ -180,4 +441,17 @@ const searchBySkill = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUser, updateCodingStats, deleteUser, searchBySkill };
+module.exports = {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  updateCodingStats,
+  importLeetCodeStats,
+  importGitHubStats,
+  addCertification,
+  deleteCertification,
+  addShowcaseItem,
+  deleteShowcaseItem,
+  deleteUser,
+  searchBySkill,
+};

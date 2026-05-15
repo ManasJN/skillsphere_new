@@ -53,7 +53,7 @@ export default function AdminDashboard() {
       };
       const res = await opportunitiesAPI.create(payload);
       setOpps(p => [res.data.data, ...p]);
-      toast.success(`Posted! Notified ${res.data.notified || 0} matching students 🔔`);
+      toast.success(`Posted. Notified ${res.data.notified || 0} matching students.`);
       setModal(false);
       setOppForm(BLANK_OPP);
     } catch (e) {
@@ -83,10 +83,10 @@ export default function AdminDashboard() {
       {overview && (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Total Students"  value={overview.totalStudents}            change={12} icon="🎓" gradient="from-indigo to-purple" />
-            <StatCard label="Active Students" value={overview.activeStudents}                       icon="⚡" gradient="from-cyan to-indigo" />
-            <StatCard label="Goal Completion" value={`${overview.goalCompletionRate}%`} change={8}  icon="🏁" gradient="from-emerald to-cyan" />
-            <StatCard label="Opportunities"   value={overview.totalOpportunities}                   icon="💼" gradient="from-amber to-rose" />
+            <StatCard label="Total students" value={overview.totalStudents} change={12} />
+            <StatCard label="Active students" value={overview.activeStudents} className="card-offset" />
+            <StatCard label="Goal completion" value={`${overview.goalCompletionRate}%`} change={8} />
+            <StatCard label="Opportunities" value={overview.totalOpportunities} />
           </div>
         </>
       )}
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         {/* Department table */}
         {deptData.length > 0 && (
           <div className="card">
-            <div className="section-title mb-4">🏫 Department Performance</div>
+            <div className="section-title mb-4">Department performance</div>
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1e2d4a]">
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
         {/* Opportunities panel */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <span className="section-title">💼 Opportunities</span>
+            <span className="section-title">Opportunities</span>
             <Button variant="primary" className="text-xs py-1.5" onClick={() => setModal(true)}>+ Post</Button>
           </div>
           {opps.length === 0
@@ -146,17 +146,16 @@ export default function AdminDashboard() {
 
       {/* Aspirations breakdown */}
       <div className="card">
-        <div className="section-title mb-4">🎯 Quick Actions</div>
+        <div className="section-title mb-4">Quick actions</div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'Broadcast Announcement', icon: '📢', action: () => toast('Use the Notifications page to broadcast') },
-            { label: 'Post Opportunity',        icon: '💼', action: () => setModal(true) },
-            { label: 'Export Student Data',     icon: '📊', action: () => toast('Export feature — connect backend endpoint') },
-            { label: 'View Analytics',          icon: '📈', action: () => window.location.href = '/analytics' },
+            { label: 'Broadcast announcement', action: () => toast('Use the Notifications page to broadcast') },
+            { label: 'Post opportunity', action: () => setModal(true) },
+            { label: 'Export student data', action: () => toast('Export feature — connect backend endpoint') },
+            { label: 'View analytics', action: () => window.location.href = '/analytics' },
           ].map((a, i) => (
             <button key={i} onClick={a.action}
-              className="card-sm flex flex-col items-center gap-2 py-5 cursor-pointer hover:bg-[#1a2a4a] transition-colors border-0 text-center">
-              <span className="text-2xl">{a.icon}</span>
+              className="card-sm flex flex-col items-start gap-1 py-4 px-3 cursor-pointer hover:border-[#334155] transition-colors text-left w-full">
               <span className="text-xs font-semibold text-[#94a3b8]">{a.label}</span>
             </button>
           ))}

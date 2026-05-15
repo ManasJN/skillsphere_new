@@ -37,15 +37,15 @@ export default function FacultyDashboard() {
     <Layout title="Faculty Dashboard">
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total Students"  value={total}                                        icon="👥" gradient="from-indigo to-purple" />
-        <StatCard label="Avg CGPA"        value={avgCGPA}                                       icon="📚" gradient="from-cyan to-indigo" />
-        <StatCard label="Active Coders"   value={students.filter(s => (s.codingStats?.leetcodeSolved || 0) > 50).length} icon="💻" gradient="from-emerald to-cyan" />
-        <StatCard label="High CGPA (9+)"  value={students.filter(s => s.cgpa >= 9).length}     icon="🌟" gradient="from-amber to-rose" />
+        <StatCard label="Total students" value={total} />
+        <StatCard label="Avg CGPA" value={avgCGPA} className="card-offset" />
+        <StatCard label="Active coders" value={students.filter(s => (s.codingStats?.leetcodeSolved || 0) > 50).length} />
+        <StatCard label="High CGPA (9+)" value={students.filter(s => s.cgpa >= 9).length} />
       </div>
 
       {/* Directory */}
       <div className="card">
-        <div className="section-title mb-4">👨‍🎓 Student Directory</div>
+        <div className="section-title mb-4">Student directory</div>
 
         {/* Filters */}
         <div className="flex gap-3 flex-wrap mb-5">
@@ -72,7 +72,7 @@ export default function FacultyDashboard() {
         {loading
           ? <div className="flex justify-center py-12"><Spinner size={28} /></div>
           : students.length === 0
-            ? <EmptyState icon="👥" title="No students found" desc="Try adjusting the filters" />
+            ? <EmptyState title="No students found" desc="Try adjusting the filters" />
             : (
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[720px]">

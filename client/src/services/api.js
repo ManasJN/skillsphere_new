@@ -40,6 +40,16 @@ export const usersAPI = {
   getById:          (id)     => api.get(`/users/${id}`),
   update:           (id, data) => api.put(`/users/${id}`, data),
   updateCodingStats:(id, data) => api.put(`/users/${id}/coding-stats`, data),
+  importLeetCode:   (id, username) => api.put(`/users/${id}/import/leetcode`, { username }),
+  importGitHub:     (id, username) => api.put(`/users/${id}/import/github`, { username }),
+  addCertification: (id, data) => api.post(`/users/${id}/certifications`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  deleteCertification: (id, certificationId) => api.delete(`/users/${id}/certifications/${certificationId}`),
+  addShowcaseItem:  (id, data) => api.post(`/users/${id}/showcase`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  deleteShowcaseItem: (id, showcaseId) => api.delete(`/users/${id}/showcase/${showcaseId}`),
   searchBySkill:    (params) => api.get('/users/search/skills', { params }),
   delete:           (id)     => api.delete(`/users/${id}`),
 };

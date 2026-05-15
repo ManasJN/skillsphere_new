@@ -30,7 +30,7 @@ export const useSkills = (userId = null) => {
   const addSkill = async (data) => {
     const res = await skillsAPI.create(data);
     setSkills(p => [res.data.data, ...p]);
-    toast.success('Skill added! +50 XP 🎯');
+    toast.success('Skill added (+50 XP)');
     return res.data.data;
   };
 
@@ -68,14 +68,14 @@ export const useGoals = (params = {}) => {
   const addGoal = async (data) => {
     const res = await goalsAPI.create(data);
     setGoals(p => [res.data.data, ...p]);
-    toast.success('Goal created! +30 XP 🏁');
+    toast.success('Goal created (+30 XP)');
     return res.data.data;
   };
 
   const updateGoal = async (id, data) => {
     const res = await goalsAPI.update(id, data);
     setGoals(p => p.map(g => g._id === id ? res.data.data : g));
-    if (res.data.data.status === 'completed') toast.success('Goal completed! 🎉 +300 XP');
+    if (res.data.data.status === 'completed') toast.success('Goal completed (+300 XP)');
     else toast.success('Goal updated!');
     return res.data.data;
   };
@@ -107,14 +107,14 @@ export const useProjects = (userId = null) => {
   const addProject = async (data) => {
     const res = await projectsAPI.create(data);
     setProjects(p => [res.data.data, ...p]);
-    toast.success('Project added! +100 XP 🛠');
+    toast.success('Project added (+100 XP)');
     return res.data.data;
   };
 
   const updateProject = async (id, data) => {
     const res = await projectsAPI.update(id, data);
     setProjects(p => p.map(pr => pr._id === id ? res.data.data : pr));
-    if (res.data.data.status === 'completed') toast.success('Project completed! +500 XP 🚀');
+    if (res.data.data.status === 'completed') toast.success('Project completed (+500 XP)');
     else toast.success('Project updated!');
     return res.data.data;
   };

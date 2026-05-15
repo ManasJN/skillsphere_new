@@ -10,6 +10,35 @@ const socialLinksSchema = new mongoose.Schema({
   portfolio:  { type: String, default: '' },
 }, { _id: false });
 
+const platformProfilesSchema = new mongoose.Schema({
+  leetcode:       { type: String, default: '' },
+  github:         { type: String, default: '' },
+  hackerrank:     { type: String, default: '' },
+  codeforces:     { type: String, default: '' },
+  codechef:       { type: String, default: '' },
+  geeksforgeeks:  { type: String, default: '' },
+}, { _id: false });
+
+const certificationSchema = new mongoose.Schema({
+  title:         { type: String, required: true, trim: true, maxlength: 160 },
+  provider:      { type: String, required: true, trim: true, maxlength: 100 },
+  credentialId:  { type: String, default: '', trim: true, maxlength: 120 },
+  credentialUrl: { type: String, default: '', trim: true },
+  issuedAt:      { type: Date },
+  expiresAt:     { type: Date },
+  fileUrl:       { type: String, default: '' },
+  notes:         { type: String, default: '', maxlength: 300 },
+}, { timestamps: true });
+
+const showcaseItemSchema = new mongoose.Schema({
+  title:       { type: String, required: true, trim: true, maxlength: 160 },
+  category:    { type: String, enum: ['coding', 'cad', 'design', 'research', 'other'], default: 'other' },
+  platform:    { type: String, default: '', trim: true, maxlength: 80 },
+  url:         { type: String, default: '', trim: true },
+  fileUrl:     { type: String, default: '' },
+  description: { type: String, default: '', maxlength: 400 },
+}, { timestamps: true });
+
 const codingStatsSchema = new mongoose.Schema({
   leetcodeSolved:    { type: Number, default: 0 },
   leetcodeEasy:      { type: Number, default: 0 },
@@ -46,6 +75,9 @@ const userSchema = new mongoose.Schema({
   phone:      { type: String },
   resumeUrl:  { type: String, default: '' },
   socialLinks: { type: socialLinksSchema, default: () => ({}) },
+  platformProfiles: { type: platformProfilesSchema, default: () => ({}) },
+  certifications:   { type: [certificationSchema], default: [] },
+  showcaseItems:    { type: [showcaseItemSchema], default: [] },
 
   // ── Aspiration ───────────────────────────────────────────────────────────────
   aspiration: {

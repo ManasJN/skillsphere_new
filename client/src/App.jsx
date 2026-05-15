@@ -5,8 +5,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Spinner } from './components/ui';
 
 // Pages
-import Landing      from './pages/Landing';
 import { Login, Register } from './pages/Auth';
+import Landing from './pages/Landing';
 import VerifyOtp from './pages/VerifyOtp';
 import Dashboard    from './pages/student/Dashboard';
 import SkillsGoals  from './pages/student/Skills';
@@ -35,21 +35,29 @@ const PrivateRoute = ({ children, roles }) => {
   return children;
 };
 
+const getDashboardPath = (role) => (
+  role === 'student' ? '/dashboard' : role === 'faculty' ? '/faculty' : '/admin'
+);
+
+const HomeRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (user) return <Navigate to={getDashboardPath(user.role)} replace />;
+  return <Landing />;
+};
+
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (user) {
-    const dest = user.role === 'student' ? '/dashboard' : user.role === 'faculty' ? '/faculty' : '/admin';
-    return <Navigate to={dest} replace />;
-  }
+  if (user) return <Navigate to={getDashboardPath(user.role)} replace />;
   return children;
 };
 
 const NotFound = () => (
-  <div className="flex flex-col items-center justify-center h-screen bg-[#060d1f] gap-4 text-center px-6">
-    <div className="text-6xl">🌌</div>
-    <h1 className="text-2xl font-extrabold">Page not found</h1>
-    <a href="/" className="text-indigo-2 hover:underline text-sm mt-2">← Back to home</a>
+  <div className="flex flex-col items-center justify-center h-screen bg-[#030b1d] gap-4 text-center px-6">
+    <p className="text-[#64748b] text-sm uppercase tracking-wide">404</p>
+    <h1 className="text-2xl font-bold text-white">Page not found</h1>
+    <a href="/" className="text-[#93c5fd] hover:underline text-sm mt-2">Back to home</a>
   </div>
 );
 
@@ -65,7 +73,7 @@ export default function App() {
       <BrowserRouter>
         <Toaster position="top-right" toastOptions={toastOptions} />
         <Routes>
-          <Route path="/"         element={<Landing />} />
+          <Route path="/"         element={<HomeRoute />} />
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
           <Route path="/verify-otp" element={<PublicRoute><VerifyOtp /></PublicRoute>}  />

@@ -105,7 +105,7 @@ export default function SkillsGoals() {
   return (
     <Layout title="Skills & Goals">
       <div className="flex items-center justify-between mb-5">
-        <Tabs tabs={[{value:'skills',label:'🎯 Skills'},{value:'goals',label:'🏁 Goals'}]} active={tab} onChange={setTab} />
+        <Tabs tabs={[{value:'skills',label:'Skills'},{value:'goals',label:'Goals'}]} active={tab} onChange={setTab} />
         {tab === 'skills'
           ? <Button variant="primary" onClick={() => { setEditSkill(null); setSkillModal(true); }}>+ Add Skill</Button>
           : <Button variant="primary" onClick={() => { setEditGoal(null);  setGoalModal(true);  }}>+ New Goal</Button>
@@ -115,7 +115,7 @@ export default function SkillsGoals() {
       {/* Skills Tab */}
       {tab === 'skills' && (
         sl ? <Spinner className="mx-auto mt-16" size={32} /> :
-        skills.length === 0 ? <EmptyState icon="🎯" title="No skills added yet" desc="Start tracking your tech skills" action={<Button variant="primary" onClick={() => setSkillModal(true)}>+ Add First Skill</Button>} /> :
+        skills.length === 0 ? <EmptyState title="No skills added yet" desc="Start tracking your tech skills" action={<Button variant="primary" onClick={() => setSkillModal(true)}>Add skill</Button>} /> :
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {skills.map((sk, i) => (
             <motion.div key={sk._id} initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.05 }}
@@ -141,7 +141,7 @@ export default function SkillsGoals() {
       {/* Goals Tab */}
       {tab === 'goals' && (
         gl ? <Spinner className="mx-auto mt-16" size={32} /> :
-        goals.length === 0 ? <EmptyState icon="🏁" title="No goals yet" desc="Set ambitious goals and track your progress" action={<Button variant="primary" onClick={() => setGoalModal(true)}>+ Set First Goal</Button>} /> :
+        goals.length === 0 ? <EmptyState title="No goals yet" desc="Set goals and track your progress over the semester" action={<Button variant="primary" onClick={() => setGoalModal(true)}>Add goal</Button>} /> :
         <div className="flex flex-col gap-4">
           {goals.map((g, i) => (
             <motion.div key={g._id} initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.05 }}
@@ -153,7 +153,7 @@ export default function SkillsGoals() {
                     <Badge variant={priorityColor(g.priority)} className="text-[10px]">{g.priority} priority</Badge>
                     <Badge variant="indigo" className="text-[10px]">{g.type}</Badge>
                     <Badge variant="cyan" className="text-[10px]">{g.category}</Badge>
-                    {g.status === 'completed' && <Badge variant="green" className="text-[10px]">✓ completed</Badge>}
+                    {g.status === 'completed' && <Badge variant="green" className="text-[10px]">completed</Badge>}
                   </div>
                 </div>
                 <div className="text-right">

@@ -36,7 +36,7 @@ export default function Settings() {
       <div className="max-w-xl mx-auto flex flex-col gap-5">
         {/* Account info */}
         <div className="card">
-          <div className="section-title mb-4">👤 Account</div>
+          <div className="section-title mb-4">Account</div>
           <div className="flex items-center gap-4">
             <Avatar name={user?.name} size={48} />
             <div>
@@ -52,7 +52,7 @@ export default function Settings() {
 
         {/* Change password */}
         <div className="card">
-          <div className="section-title mb-4">🔒 Change Password</div>
+          <div className="section-title mb-4">Change password</div>
           <div className="flex flex-col gap-3">
             <Input
               label="Current Password"
@@ -83,13 +83,13 @@ export default function Settings() {
 
         {/* Appearance */}
         <div className="card">
-          <div className="section-title mb-3">🎨 Appearance</div>
-          <p className="text-sm text-[#64748b]">Dark mode is always on — built for late-night grinders. 🌙</p>
+          <div className="section-title mb-3">Appearance</div>
+          <p className="text-sm text-[#64748b]">Dark theme only for now. Light mode may be added later.</p>
         </div>
 
         {/* Danger zone */}
         <div className="card border-rose/20">
-          <div className="section-title mb-3 text-rose">⚠️ Danger Zone</div>
+          <div className="section-title mb-3 text-rose">Sign out</div>
           <p className="text-xs text-[#64748b] mb-4">
             Signing out will clear your session. Your data is saved.
           </p>

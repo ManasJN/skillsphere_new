@@ -68,14 +68,14 @@ export default function Projects() {
     <Layout title="Projects">
       <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
         <Tabs
-          tabs={[{value:'all',label:'All'},{value:'ongoing',label:'🔄 Ongoing'},{value:'completed',label:'✅ Done'},{value:'planned',label:'📋 Planned'}]}
+          tabs={[{value:'all',label:'All'},{value:'ongoing',label:'Ongoing'},{value:'completed',label:'Done'},{value:'planned',label:'Planned'}]}
           active={filter} onChange={setFilter}
         />
         <Button variant="primary" onClick={() => { setEditing(null); setModal(true); }}>+ Add Project</Button>
       </div>
 
       {loading ? <Spinner className="mx-auto mt-16" size={32} /> :
-       filtered.length === 0 ? <EmptyState icon="🛠" title="No projects here" desc="Start building and showcase your work" action={<Button variant="primary" onClick={() => setModal(true)}>+ Add Project</Button>} /> :
+       filtered.length === 0 ? <EmptyState title="No projects here" desc="Add projects you have built or are working on" action={<Button variant="primary" onClick={() => setModal(true)}>Add project</Button>} /> :
        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
          {filtered.map((p, i) => (
            <motion.div key={p._id} initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.06 }}
@@ -103,15 +103,15 @@ export default function Projects() {
                {/* Links */}
                <div className="flex gap-2 mb-3">
                  {p.githubUrl && <a href={p.githubUrl} target="_blank" rel="noreferrer"
-                   className="text-xs text-[#64748b] hover:text-indigo-2 flex items-center gap-1 transition-colors">🐙 GitHub</a>}
+                   className="text-xs text-[#64748b] hover:text-[#93c5fd] transition-colors">GitHub</a>}
                  {p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noreferrer"
-                   className="text-xs text-[#64748b] hover:text-cyan flex items-center gap-1 transition-colors ml-2">🔗 Demo</a>}
+                   className="text-xs text-[#64748b] hover:text-[#93c5fd] transition-colors ml-3">Demo</a>}
                </div>
                {/* Actions */}
                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                  <Button variant="ghost" className="flex-1 text-xs py-1" onClick={() => { setEditing(p); setModal(true); }}>Edit</Button>
                  {p.status !== 'completed' &&
-                   <Button variant="success" className="flex-1 text-xs py-1" onClick={() => updateProject(p._id, { status:'completed' })}>✓ Done</Button>}
+                   <Button variant="success" className="flex-1 text-xs py-1" onClick={() => updateProject(p._id, { status:'completed' })}>Mark done</Button>}
                  <Button variant="danger" className="flex-1 text-xs py-1" onClick={() => deleteProject(p._id)}>×</Button>
                </div>
              </div>

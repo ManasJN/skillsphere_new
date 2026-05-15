@@ -35,7 +35,7 @@ export function Login() {
     setLoading(true);
     try {
       const user = await login(form.email, form.password);
-      toast.success(`Welcome back, ${user.name.split(' ')[0]}! 👋`);
+      toast.success(`Welcome back, ${user.name.split(' ')[0]}`);
       navigate(user.role === 'student' ? '/dashboard' : user.role === 'faculty' ? '/faculty' : '/admin');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
@@ -138,7 +138,7 @@ export function Register() {
       const { confirmPassword, ...userData } = form;
 
         const data = await register(userData);
-      toast.success('OTP sent to your email 📧');
+      toast.success('OTP sent to your email');
 
       localStorage.setItem(
         'verifyEmail',

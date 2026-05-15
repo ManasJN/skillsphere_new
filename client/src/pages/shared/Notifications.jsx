@@ -16,7 +16,7 @@ export default function Notifications() {
         </span>
         {unread > 0 && (
           <Button variant="ghost" className="text-xs" onClick={markAllRead}>
-            ✓ Mark all read
+            Mark all read
           </Button>
         )}
       </div>
@@ -25,7 +25,7 @@ export default function Notifications() {
         {loading
           ? <div className="flex justify-center py-12"><Spinner size={28} /></div>
           : notifs.length === 0
-            ? <EmptyState icon="🔔" title="No notifications" desc="You're all caught up!" />
+            ? <EmptyState title="No notifications" desc="You are all caught up." />
             : notifs.map((n, i) => (
               <div
                 key={n._id}
@@ -40,8 +40,6 @@ export default function Notifications() {
                 />
 
                 {/* icon */}
-                <span className="text-xl flex-shrink-0 mt-0.5">{n.icon || '🔔'}</span>
-
                 {/* content */}
                 <div className="flex-1 min-w-0">
                   <div className={`text-sm font-semibold mb-0.5 ${n.isRead ? 'text-[#94a3b8]' : 'text-[#f1f5f9]'}`}>
