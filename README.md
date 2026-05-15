@@ -1,123 +1,173 @@
+````md
 # ⬡ SkillSphere — Full-Stack Student Growth Tracking Platform
 
 > **Track Skills. Build Growth. Shape Futures.**
 
-A complete full-stack web app with React frontend + Node.js/Express backend + MongoDB.
+A complete full-stack web app with React frontend + Node.js/Express backend + MongoDB Atlas.
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
-```
+```bash
 skillsphere/
 ├── client/          ← React + Tailwind CSS frontend
 ├── server/          ← Node.js + Express + MongoDB backend
 ├── package.json     ← Root (runs both together)
 └── README.md
+````
+
+---
+
+# ✨ Features
+
+* JWT Authentication
+* Email OTP Verification System
+* Role-based Access Control (Student / Faculty / Admin)
+* Student Skill Tracking
+* Coding Profile Analytics
+* XP & Leaderboard System
+* Opportunities & Notifications
+* Protected Routes
+* MongoDB Atlas Cloud Database
+* Responsive Dark UI
+* Faculty & Admin Dashboards
+
+---
+
+# 🚀 Quick Setup (5 minutes)
+
+## 1. Install all dependencies
+
+```bash
+npm install
+npm run install:all
 ```
 
 ---
 
-## 🚀 Quick Setup (5 minutes)
+## 2. Configure the backend
 
-### 1. Install all dependencies
-```bash
-npm install          # installs concurrently
-npm run install:all  # installs client + server deps
-```
-
-### 2. Configure the backend
 ```bash
 cd server
 cp .env.example .env
 ```
+
 Edit `.env`:
+
 ```env
-MONGO_URI=mongodb://localhost:27017/skillsphere
+MONGO_URI=your_mongodb_atlas_connection_string
+
 JWT_SECRET=your_secret_at_least_32_characters_long
+
 JWT_REFRESH_SECRET=another_secret_key_here
+
 CLIENT_URL=http://localhost:3000
+
+EMAIL_USER=your_gmail@gmail.com
+
+EMAIL_PASS=your_gmail_app_password
 ```
 
-### 3. Seed the database
+---
+
+## 3. Seed the database
+
 ```bash
 npm run seed
 ```
 
-### 4. Run both client + server together
+---
+
+## 4. Run both frontend + backend
+
 ```bash
 npm run dev
 ```
-- **Frontend** → http://localhost:3000
-- **Backend API** → http://localhost:5000
-- **API Health** → http://localhost:5000/api/health
+
+### URLs
+
+* Frontend → [http://localhost:3000](http://localhost:3000)
+* Backend API → [http://localhost:5000](http://localhost:5000)
+* API Health → [http://localhost:5000/api/health](http://localhost:5000/api/health)
 
 ---
 
-## 🔑 Demo Accounts (after seeding)
+# 🔑 Demo Accounts (after seeding)
 
-| Role    | Email              | Password       |
-|---------|--------------------|----------------|
-| Student | arjun@nit.edu      | Student@1234   |
-| Student | priya@nit.edu      | Student@1234   |
-| Faculty | faculty@nit.edu    | Faculty@1234   |
-| Admin   | admin@nit.edu      | Admin@1234     |
-
----
-
-## 🗂 Frontend Pages
-
-| Route           | Page                     | Access          |
-|-----------------|--------------------------|-----------------|
-| `/`             | Landing Page             | Public          |
-| `/login`        | Login                    | Public          |
-| `/register`     | Register                 | Public          |
-| `/dashboard`    | Student Dashboard        | Student         |
-| `/profile`      | My Profile               | Student         |
-| `/skills`       | Skills & Goals           | Student         |
-| `/projects`     | Project Portfolio        | Student         |
-| `/faculty`      | Faculty Dashboard        | Faculty + Admin |
-| `/admin`        | Admin Dashboard          | Admin           |
-| `/leaderboard`  | Leaderboard              | All             |
-| `/opportunities`| Opportunities Feed       | All             |
-| `/analytics`    | Analytics                | All             |
-| `/notifications`| Notifications            | All             |
-| `/settings`     | Settings                 | All             |
+| Role    | Email                                         | Password     |
+| ------- | --------------------------------------------- | ------------ |
+| Student | [arjun@jec.ac.in](mailto:arjun@jec.ac.in)     | Student@1234 |
+| Student | [priya@jec.ac.in](mailto:priya@jec.ac.in)     | Student@1234 |
+| Faculty | [faculty@jec.ac.in](mailto:faculty@jec.ac.in) | Faculty@1234 |
+| Admin   | [admin@jec.ac.in](mailto:admin@jec.ac.in)     | Admin@1234   |
 
 ---
 
-## 🧩 Tech Stack
+# 🗂 Frontend Pages
 
-**Frontend:**
-- React 18 + React Router v6
-- Tailwind CSS (dark theme)
-- Framer Motion (animations)
-- Recharts (analytics charts)
-- Axios (API calls)
-- React Hot Toast (notifications)
-
-**Backend:**
-- Node.js + Express.js
-- MongoDB + Mongoose
-- JWT Authentication (access + refresh tokens)
-- bcryptjs (password hashing)
-- Express Rate Limiting + Helmet (security)
-- Multer (file uploads)
+| Route            | Page               | Access          |
+| ---------------- | ------------------ | --------------- |
+| `/`              | Landing Page       | Public          |
+| `/login`         | Login              | Public          |
+| `/register`      | Register           | Public          |
+| `/verify-otp`    | OTP Verification   | Public          |
+| `/dashboard`     | Student Dashboard  | Student         |
+| `/profile`       | My Profile         | Student         |
+| `/skills`        | Skills & Goals     | Student         |
+| `/projects`      | Project Portfolio  | Student         |
+| `/faculty`       | Faculty Dashboard  | Faculty + Admin |
+| `/admin`         | Admin Dashboard    | Admin           |
+| `/leaderboard`   | Leaderboard        | All             |
+| `/opportunities` | Opportunities Feed | All             |
+| `/analytics`     | Analytics          | All             |
+| `/notifications` | Notifications      | All             |
+| `/settings`      | Settings           | All             |
 
 ---
 
-## 📡 Key API Endpoints
+# 🧩 Tech Stack
 
-```
+## Frontend
+
+* React 18
+* React Router v6
+* Tailwind CSS
+* Framer Motion
+* Recharts
+* Axios
+* React Hot Toast
+
+---
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB Atlas + Mongoose
+* JWT Authentication
+* Email OTP Verification
+* bcryptjs Password Hashing
+* Express Rate Limiting
+* Helmet Security
+* Multer File Uploads
+
+---
+
+# 📡 Key API Endpoints
+
+```bash
 POST   /api/auth/register
+POST   /api/auth/verify-otp
 POST   /api/auth/login
+POST   /api/auth/refresh
 GET    /api/auth/me
 
-GET    /api/users              # Faculty/Admin only
+GET    /api/users
 GET    /api/users/:id
 PUT    /api/users/:id
 
-GET    /api/skills             # Own skills
+GET    /api/skills
 POST   /api/skills
 PUT    /api/skills/:id
 
@@ -129,53 +179,109 @@ GET    /api/projects
 POST   /api/projects
 PUT    /api/projects/:id
 
-GET    /api/opportunities      # With match score for students
-POST   /api/opportunities      # Faculty/Admin
+GET    /api/opportunities
+POST   /api/opportunities
 POST   /api/opportunities/:id/apply
 
 GET    /api/leaderboard?type=xp|cgpa|leetcode|codeforces
+
 GET    /api/analytics/my-stats
-GET    /api/analytics/overview  # Admin/Faculty
+GET    /api/analytics/overview
 
 GET    /api/notifications
 PUT    /api/notifications/mark-all-read
-POST   /api/notifications/broadcast  # Faculty/Admin
+POST   /api/notifications/broadcast
 ```
 
 ---
 
-## ⚙️ Individual Commands
+# ⚙️ Individual Commands
+
+## Run server only
 
 ```bash
-# Run server only
 npm run server
-
-# Run client only
-npm run client
-
-# Seed database
-npm run seed
-
-# Build for production
-npm run build
 ```
 
----
-
-## 🏗 Production Deployment
+## Run client only
 
 ```bash
-# Build React app
+npm run client
+```
+
+## Seed database
+
+```bash
+npm run seed
+```
+
+## Build for production
+
+```bash
 npm run build
-
-# Serve static files from Express (add to server/index.js):
-# app.use(express.static(path.join(__dirname, '../client/build')));
-
-# Use PM2
-npm install -g pm2
-cd server && pm2 start index.js --name skillsphere
 ```
 
 ---
 
-*Built with ❤️ — SkillSphere v1.0*
+# 🏗 Production Deployment
+
+## Build React App
+
+```bash
+npm run build
+```
+
+---
+
+## Serve Static Files from Express
+
+Add inside:
+
+```bash
+server/index.js
+```
+
+```js
+app.use(express.static(path.join(__dirname, '../client/build')));
+```
+
+---
+
+## Run with PM2
+
+```bash
+npm install -g pm2
+
+cd server
+
+pm2 start index.js --name skillsphere
+```
+
+---
+
+# 🔒 Authentication Flow
+
+```txt
+Register
+   ↓
+OTP sent to email
+   ↓
+Email Verification
+   ↓
+Login
+   ↓
+Dashboard Access
+```
+
+---
+
+# 🏫 Built for Jorhat Engineering College (JEC)
+
+SkillSphere is designed as a centralized student growth and skill tracking platform for JEC students, faculty members, and administrators.
+
+---
+
+# ❤️ Built with Passion — SkillSphere v1.0
+
+```
+```
