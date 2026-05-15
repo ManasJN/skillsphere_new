@@ -103,9 +103,18 @@ export function Register() {
     if (form.password.length < 8) return toast.error('Password must be at least 8 characters');
     setLoading(true);
     try {
-      const user = await register(form);
-      toast.success(`Welcome to SkillSphere, ${user.name.split(' ')[0]}! 🚀`);
-      navigate(user.role === 'student' ? '/dashboard' : user.role === 'faculty' ? '/faculty' : '/admin');
+
+      const data = await register(form);
+
+      toast.success('OTP sent to your email 📧');
+
+      localStorage.setItem(
+        'verifyEmail',
+        form.email
+      );
+
+      navigate('/verify-otp');
+
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');
     } finally { setLoading(false); }

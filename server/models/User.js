@@ -63,11 +63,30 @@ const userSchema = new mongoose.Schema({
   // ── Coding Stats ─────────────────────────────────────────────────────────────
   codingStats: { type: codingStatsSchema, default: () => ({}) },
 
-  // ── Meta ─────────────────────────────────────────────────────────────────────
-  isActive:    { type: Boolean, default: true },
-  isVerified:  { type: Boolean, default: false },
-  college:     { type: String, default: 'NIT Silchar' },
-  joinedAt:    { type: Date, default: Date.now },
+// ── Meta ─────────────────────────────────────────────────────────────────────
+isActive:    { type: Boolean, default: true },
+
+isVerified:  { 
+  type: Boolean, 
+  default: false 
+},
+
+otp: {
+  type: String,
+  default: null
+},
+
+otpExpiry: {
+  type: Date,
+  default: null
+},
+
+college:     { type: String, default: 'Jorhat Engineering College' },
+
+joinedAt:    { 
+  type: Date, 
+  default: Date.now 
+},
 
   // ── Faculty specific ─────────────────────────────────────────────────────────
   designation: { type: String }, // "Assistant Professor", "HOD" etc.

@@ -7,6 +7,7 @@ import { Spinner } from './components/ui';
 // Pages
 import Landing      from './pages/Landing';
 import { Login, Register } from './pages/Auth';
+import VerifyOtp from './pages/VerifyOtp';
 import Dashboard    from './pages/student/Dashboard';
 import SkillsGoals  from './pages/student/Skills';
 import Projects     from './pages/student/Projects';
@@ -67,6 +68,7 @@ export default function App() {
           <Route path="/"         element={<Landing />} />
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+          <Route path="/verify-otp" element={<PublicRoute><VerifyOtp /></PublicRoute>}  />
 
           <Route path="/dashboard" element={<PrivateRoute roles={['student']}><Dashboard /></PrivateRoute>} />
           <Route path="/profile"   element={<PrivateRoute roles={['student']}><Profile /></PrivateRoute>} />

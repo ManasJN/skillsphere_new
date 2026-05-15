@@ -1,74 +1,234 @@
 const User = require('../models/User');
-const { sendTokenResponse, verifyToken, generateToken } = require('../utils/jwt');
+
+const {
+  sendTokenResponse,
+  verifyToken,
+  generateToken
+} = require('../utils/jwt');
+
 const { updateStreak } = require('../utils/xp');
+
 const sendWelcomeEmail = require('../utils/sendWelcomeEmail');
+
+const sendOtpEmail = require('../utils/sendOtpEmail');
+
 
 // ── @route  POST /api/auth/register ──────────────────────────────────────────
 // ── @access Public
 const register = async (req, res, next) => {
+
   try {
-    const { name, email, password, role, department, rollNumber, semester, college } = req.body;
+
+    const {
+      name,
+      email,
+      password,
+      role,
+      department,
+      rollNumber,
+      semester,
+      college
+    } = req.body;
 
     const existing = await User.findOne({ email });
 
     if (existing) {
+
       return res.status(400).json({
         success: false,
         message: 'Email already registered'
       });
+
     }
 
+    // Generate OTP
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // Create user
     const user = await User.create({
+
       name,
       email,
       password,
+
       role: role || 'student',
+
       department,
+
       rollNumber,
+
       semester,
+
       college,
+
+      otp,
+
+      otpExpiry: Date.now() + 5 * 60 * 1000
+
     });
 
-    // Send welcome email
-    await sendWelcomeEmail(user.email, user.name);
+    // Send OTP Email
+    await sendOtpEmail(
+      user.email,
+      user.name,
+      otp
+    );
 
-    // Send token response
-    sendTokenResponse(user, 201, res);
+    // Response
+    res.status(201).json({
+
+      success: true,
+
+      message: 'OTP sent to email',
+
+      email: user.email
+
+    });
 
   } catch (err) {
+
     next(err);
+
   }
+
 };
+
+
+// ── @route  POST /api/auth/verify-otp ────────────────────────────────────────
+// ── @access Public
+const verifyOtp = async (req, res, next) => {
+
+  try {
+
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+
+      return res.status(404).json({
+
+        success: false,
+
+        message: 'User not found'
+
+      });
+
+    }
+
+    if (user.otp !== otp) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: 'Invalid OTP'
+
+      });
+
+    }
+
+    if (user.otpExpiry < Date.now()) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: 'OTP expired'
+
+      });
+
+    }
+
+    // Verify account
+    user.isVerified = true;
+
+    user.otp = null;
+
+    user.otpExpiry = null;
+
+    await user.save();
+
+    // Send Welcome Email
+    await sendWelcomeEmail(
+      user.email,
+      user.name
+    );
+
+    // Login user automatically
+    sendTokenResponse(user, 200, res);
+
+  } catch (err) {
+
+    next(err);
+
+  }
+
+};
+
 
 // ── @route  POST /api/auth/login ──────────────────────────────────────────────
 // ── @access Public
 const login = async (req, res, next) => {
+
   try {
+
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email })
+      .select('+password');
 
     if (!user) {
+
       return res.status(401).json({
+
         success: false,
+
         message: 'Invalid email or password'
+
       });
+
+    }
+
+    // Check verification
+    if (!user.isVerified) {
+
+      return res.status(401).json({
+
+        success: false,
+
+        message: 'Please verify your email first'
+
+      });
+
     }
 
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
+
       return res.status(401).json({
+
         success: false,
+
         message: 'Invalid email or password'
+
       });
+
     }
 
     if (!user.isActive) {
+
       return res.status(403).json({
+
         success: false,
+
         message: 'Account deactivated. Contact admin.'
+
       });
+
     }
 
     // Update streak silently
@@ -77,21 +237,32 @@ const login = async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 
   } catch (err) {
+
     next(err);
+
   }
+
 };
+
 
 // ── @route  POST /api/auth/refresh ───────────────────────────────────────────
 // ── @access Public
 const refresh = async (req, res, next) => {
+
   try {
+
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
+
       return res.status(401).json({
+
         success: false,
+
         message: 'No refresh token provided'
+
       });
+
     }
 
     const decoded = verifyToken(
@@ -102,58 +273,93 @@ const refresh = async (req, res, next) => {
     const user = await User.findById(decoded.id);
 
     if (!user) {
+
       return res.status(401).json({
+
         success: false,
+
         message: 'User not found'
+
       });
+
     }
 
     const newToken = generateToken(user._id, user.role);
 
     res.json({
+
       success: true,
+
       token: newToken
+
     });
 
   } catch (err) {
+
     return res.status(401).json({
+
       success: false,
+
       message: 'Invalid or expired refresh token'
+
     });
+
   }
+
 };
+
 
 // ── @route  GET /api/auth/me ──────────────────────────────────────────────────
 // ── @access Private
 const getMe = async (req, res) => {
+
   const user = await User.findById(req.user._id)
     .populate('mentoring', 'name email department');
 
   res.json({
+
     success: true,
+
     data: user
+
   });
+
 };
+
 
 // ── @route  POST /api/auth/logout ─────────────────────────────────────────────
 // ── @access Private
 const logout = (req, res) => {
+
   res.cookie('token', '', {
+
     expires: new Date(0),
+
     httpOnly: true
+
   });
 
   res.json({
+
     success: true,
+
     message: 'Logged out successfully'
+
   });
+
 };
+
 
 // ── @route  PUT /api/auth/change-password ─────────────────────────────────────
 // ── @access Private
 const changePassword = async (req, res, next) => {
+
   try {
-    const { currentPassword, newPassword } = req.body;
+
+    const {
+      currentPassword,
+      newPassword
+    } = req.body;
 
     const user = await User.findById(req.user._id)
       .select('+password');
@@ -161,17 +367,27 @@ const changePassword = async (req, res, next) => {
     const isMatch = await user.matchPassword(currentPassword);
 
     if (!isMatch) {
+
       return res.status(400).json({
+
         success: false,
+
         message: 'Current password is incorrect'
+
       });
+
     }
 
     if (newPassword.length < 8) {
+
       return res.status(400).json({
+
         success: false,
+
         message: 'New password must be at least 8 characters'
+
       });
+
     }
 
     user.password = newPassword;
@@ -179,17 +395,25 @@ const changePassword = async (req, res, next) => {
     await user.save();
 
     res.json({
+
       success: true,
+
       message: 'Password updated successfully'
+
     });
 
   } catch (err) {
+
     next(err);
+
   }
+
 };
+
 
 module.exports = {
   register,
+  verifyOtp,
   login,
   refresh,
   getMe,
