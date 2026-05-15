@@ -25,6 +25,7 @@ export function Login() {
   const navigate  = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const set = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }));
 
@@ -62,7 +63,23 @@ export function Login() {
 
         <form onSubmit={submit} className="flex flex-col gap-4">
           <Input label="Email" type="email" placeholder="you@college.edu" value={form.email} onChange={set('email')} />
-          <Input label="Password" type="password" placeholder="••••••••" value={form.password} onChange={set('password')} />
+          <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={form.password}
+                onChange={set('password')}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-xs text-[#94a3b8]"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           <Button variant="primary" loading={loading} className="w-full py-2.5 mt-1">Sign In →</Button>
         </form>
 
@@ -92,8 +109,19 @@ export function Login() {
 export function Register() {
   const { register } = useAuth();
   const navigate     = useNavigate();
-  const [form, setForm] = useState({ name:'', email:'', password:'', role:'student', department:'CSE', rollNumber:'', semester:6 });
+  const [form, setForm] = useState({
+            name:'',
+            email:'',
+            password:'',
+            confirmPassword:'',
+            role:'student',
+            department:'CSE',
+            rollNumber:'',
+            semester:6
+          });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const set = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }));
 
@@ -101,11 +129,15 @@ export function Register() {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) return toast.error('Please fill all required fields');
     if (form.password.length < 8) return toast.error('Password must be at least 8 characters');
+    if (form.password !== form.confirmPassword) {
+          return toast.error('Passwords do not match');
+        }
     setLoading(true);
     try {
 
-      const data = await register(form);
+      const { confirmPassword, ...userData } = form;
 
+        const data = await register(userData);
       toast.success('OTP sent to your email 📧');
 
       localStorage.setItem(
@@ -141,7 +173,40 @@ export function Register() {
         <form onSubmit={submit} className="flex flex-col gap-3">
           <Input label="Full Name *" placeholder="Arjun Mehta" value={form.name} onChange={set('name')} />
           <Input label="Email *" type="email" placeholder="you@college.edu" value={form.email} onChange={set('email')} />
-          <Input label="Password *" type="password" placeholder="Min 8 characters" value={form.password} onChange={set('password')} />
+          <div className="relative">
+              <Input
+                label="Password *"
+                type={showPassword ? "text" : "password"}
+                placeholder="Min 8 characters"
+                value={form.password}
+                onChange={set('password')}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-xs text-[#94a3b8]"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+            <div className="relative">
+                <Input
+                  label="Confirm Password *"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Re-enter password"
+                  value={form.confirmPassword || ""}
+                  onChange={set('confirmPassword')}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-9 text-xs text-[#94a3b8]"
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
 
           <div className="grid grid-cols-2 gap-3">
             <Select label="Department" value={form.department} onChange={set('department')}
