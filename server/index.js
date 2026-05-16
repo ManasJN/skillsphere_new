@@ -62,6 +62,7 @@ app.use('/api/achievements',  require('./routes/achievements'));
 app.use('/api/leaderboard',   require('./routes/leaderboard'));
 app.use('/api/analytics',     require('./routes/analytics'));
 app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/recommendations', require('./routes/recommendations'));
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((req, res) => {

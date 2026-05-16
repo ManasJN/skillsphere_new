@@ -6,6 +6,8 @@ import { Avatar, Badge, Button, Spinner, StatCard, EmptyState } from '../../comp
 import { usersAPI } from '../../services/api';
 import { useDebounce } from '../../hooks';
 
+const DEPARTMENTS = ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'OTHER'];
+
 export default function FacultyDashboard() {
   const [students, setStudents]   = useState([]);
   const [total,    setTotal]      = useState(0);
@@ -57,7 +59,7 @@ export default function FacultyDashboard() {
           />
           <select value={dept} onChange={e => setDept(e.target.value)} className="input w-36">
             <option value="">All Depts</option>
-            {['CSE', 'ECE', 'IT', 'MECH', 'EEE', 'CIVIL'].map(d => (
+            {DEPARTMENTS.map(d => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>

@@ -4,6 +4,8 @@ import { Avatar, Badge, Spinner, Tabs } from '../../components/ui';
 import { leaderboardAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
+const DEPARTMENT_FILTERS = ['ALL', 'CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'OTHER'];
+
 export default function Leaderboard() {
   const { user } = useAuth();
   const [data,    setData]    = useState([]);
@@ -56,7 +58,7 @@ export default function Leaderboard() {
           onChange={setType}
         />
         <div className="flex gap-1 flex-wrap">
-          {['ALL', 'CSE', 'ECE', 'IT', 'MECH', 'EEE'].map(d => (
+          {DEPARTMENT_FILTERS.map(d => (
             <button key={d} onClick={() => setDept(d)}
               className={`px-3 py-1.5 text-xs font-semibold transition-all border cursor-pointer
                 ${dept === d

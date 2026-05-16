@@ -126,4 +126,15 @@ export const achievementsAPI = {
   getByUser:   (userId) => api.get(`/achievements/user/${userId}`),
 };
 
+// ── Career recommendations ────────────────────────────────────────────────────
+export const recommendationsAPI = {
+  getProfile:        ()       => api.get('/recommendations/profile'),
+  saveProfile:       (data)   => api.put('/recommendations/profile', data),
+  generate:          ()       => api.post('/recommendations/generate'),
+  getLatest:         ()       => api.get('/recommendations/latest'),
+  getHistory:        (params) => api.get('/recommendations/history', { params }),
+  getById:           (id)     => api.get(`/recommendations/${id}`),
+  getDashboardSummary: ()     => api.get('/recommendations/dashboard-summary'),
+};
+
 export default api;

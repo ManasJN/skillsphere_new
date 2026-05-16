@@ -13,6 +13,7 @@ const studentNav = [
   { to: '/skills',        label: 'Skills & Goals' },
   { to: '/projects',      label: 'Projects' },
   { section: 'Discover' },
+  { to: '/recommendations', label: 'Recommendations' },
   { to: '/opportunities', label: 'Opportunities', badge: 'unread' },
   { to: '/leaderboard',   label: 'Leaderboard' },
   { section: 'Insights' },

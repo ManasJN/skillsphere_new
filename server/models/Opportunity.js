@@ -15,7 +15,7 @@ const opportunitySchema = new mongoose.Schema({
   },
 
   // Who can apply
-  eligibleDepts: [{ type: String, enum: ['CSE', 'ECE', 'IT', 'MECH', 'CIVIL', 'EEE', 'ALL'] }],
+  eligibleDepts: [{ type: String, enum: ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'ALL'] }],
   minCGPA:       { type: Number, default: 0 },
   minSemester:   { type: Number, default: 1 },
   maxSemester:   { type: Number, default: 8 },

@@ -53,7 +53,7 @@ const getLeaderboard = async (req, res, next) => {
 // ── @access Faculty, Admin
 const getDeptSummary = async (req, res, next) => {
   try {
-    const depts = ['CSE', 'ECE', 'IT', 'MECH', 'CIVIL', 'EEE'];
+    const depts = ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'OTHER'];
     const summary = await Promise.all(depts.map(async dept => {
       const students = await User.find({ role: 'student', department: dept, isActive: true })
         .select('cgpa xpPoints codingStats');

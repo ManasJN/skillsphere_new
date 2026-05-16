@@ -21,7 +21,7 @@ const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 // ── Raw Data ──────────────────────────────────────────────────────────────────
-const DEPTS       = ['CSE', 'ECE', 'IT', 'MECH', 'EEE'];
+const DEPTS       = ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL'];
 const ASPIRATIONS = ['Placements', 'GATE', 'Higher Studies', 'Startup', 'Research', 'Government', 'Freelancing'];
 const SKILL_POOL  = [
   { name: 'Data Structures & Algorithms', category: 'DSA' },
@@ -44,13 +44,13 @@ const SKILL_POOL  = [
 const STUDENT_DATA = [
   { name: 'Arjun Mehta',    email: 'arjun@nit.edu',   dept: 'CSE', sem: 6, roll: '21CS047', cgpa: 9.2, aspiration: 'Placements',     lc: 247, cf: 1680, gh: 89,  xp: 4820 },
   { name: 'Priya Sharma',   email: 'priya@nit.edu',   dept: 'CSE', sem: 6, roll: '21CS023', cgpa: 9.5, aspiration: 'Research',        lc: 198, cf: 1920, gh: 134, xp: 5340 },
-  { name: 'Rahul Verma',    email: 'rahul@nit.edu',   dept: 'ECE', sem: 6, roll: '21EC015', cgpa: 8.7, aspiration: 'GATE',            lc: 132, cf: 1420, gh: 45,  xp: 3290 },
-  { name: 'Sneha Iyer',     email: 'sneha@nit.edu',   dept: 'IT',  sem: 4, roll: '23IT008', cgpa: 8.9, aspiration: 'Startup',         lc: 89,  cf: 0,    gh: 67,  xp: 2870 },
+  { name: 'Rahul Verma',    email: 'rahul@nit.edu',   dept: 'ELECTRONICS', sem: 6, roll: '21EC015', cgpa: 8.7, aspiration: 'GATE',            lc: 132, cf: 1420, gh: 45,  xp: 3290 },
+  { name: 'Sneha Iyer',     email: 'sneha@nit.edu',   dept: 'INSTRUMENTATION',  sem: 4, roll: '23IN008', cgpa: 8.9, aspiration: 'Startup',         lc: 89,  cf: 0,    gh: 67,  xp: 2870 },
   { name: 'Karthik Rao',    email: 'karthik@nit.edu', dept: 'CSE', sem: 8, roll: '21CS031', cgpa: 8.4, aspiration: 'Placements',     lc: 312, cf: 1540, gh: 112, xp: 5100 },
-  { name: 'Ananya Singh',   email: 'ananya@nit.edu',  dept: 'IT',  sem: 6, roll: '21IT019', cgpa: 9.0, aspiration: 'Higher Studies',  lc: 167, cf: 1380, gh: 78,  xp: 3650 },
+  { name: 'Ananya Singh',   email: 'ananya@nit.edu',  dept: 'CHEMICAL',  sem: 6, roll: '21CH019', cgpa: 9.0, aspiration: 'Higher Studies',  lc: 167, cf: 1380, gh: 78,  xp: 3650 },
   { name: 'Dev Patel',      email: 'dev@nit.edu',     dept: 'CSE', sem: 4, roll: '23CS012', cgpa: 8.1, aspiration: 'Placements',     lc: 95,  cf: 1200, gh: 34,  xp: 2100 },
   { name: 'Riya Nair',      email: 'riya@nit.edu',    dept: 'MECH',sem: 6, roll: '21ME022', cgpa: 7.9, aspiration: 'Government',      lc: 45,  cf: 0,    gh: 18,  xp: 1200 },
-  { name: 'Aditya Kumar',   email: 'aditya@nit.edu',  dept: 'EEE', sem: 6, roll: '21EE009', cgpa: 8.3, aspiration: 'GATE',            lc: 78,  cf: 1100, gh: 22,  xp: 1890 },
+  { name: 'Aditya Kumar',   email: 'aditya@nit.edu',  dept: 'ELECTRICAL', sem: 6, roll: '21EE009', cgpa: 8.3, aspiration: 'GATE',            lc: 78,  cf: 1100, gh: 22,  xp: 1890 },
   { name: 'Meera Pillai',   email: 'meera@nit.edu',   dept: 'CSE', sem: 2, roll: '24CS005', cgpa: 9.1, aspiration: 'Research',        lc: 34,  cf: 890,  gh: 12,  xp: 980  },
 ];
 
@@ -71,7 +71,7 @@ const OPPORTUNITIES = [
   {
     title: 'Google SWE Intern 2025', company: 'Google', type: 'Internship',
     description: 'Join Google as a software engineering intern. Work on real products used by billions.',
-    eligibleDepts: ['CSE', 'IT', 'ECE'], minCGPA: 8.0, minSemester: 5,
+    eligibleDepts: ['CSE', 'INSTRUMENTATION', 'ELECTRONICS'], minCGPA: 8.0, minSemester: 5,
     requiredSkills: ['Data Structures & Algorithms', 'System Design'],
     preferredSkills: ['Python', 'C++', 'Distributed Systems'],
     suitableFor: ['Placements'], stipend: '₹1,20,000/month',
@@ -82,7 +82,7 @@ const OPPORTUNITIES = [
   {
     title: 'Flipkart GRID 6.0', company: 'Flipkart', type: 'Hackathon',
     description: 'National level engineering challenge by Flipkart. Compete for prizes up to ₹5 Lakhs.',
-    eligibleDepts: ['CSE', 'IT', 'ECE'], minCGPA: 7.0,
+    eligibleDepts: ['CSE', 'INSTRUMENTATION', 'ELECTRONICS'], minCGPA: 7.0,
     requiredSkills: ['React.js', 'Node.js'],
     preferredSkills: ['Machine Learning', 'Docker'],
     suitableFor: ['Placements', 'Startup'], stipend: 'Prize Pool ₹10L+',
@@ -93,7 +93,7 @@ const OPPORTUNITIES = [
   {
     title: 'ISRO Research Fellowship', company: 'ISRO', type: 'Research',
     description: 'Work with ISRO scientists on cutting-edge space technology research.',
-    eligibleDepts: ['ECE', 'EEE', 'MECH', 'CSE'], minCGPA: 8.5,
+    eligibleDepts: ['ELECTRONICS', 'ELECTRICAL', 'MECH', 'CSE'], minCGPA: 8.5,
     requiredSkills: ['Python', 'Machine Learning'],
     preferredSkills: ['Deep Learning', 'Signal Processing'],
     suitableFor: ['Research', 'Higher Studies'],
@@ -115,7 +115,7 @@ const OPPORTUNITIES = [
   {
     title: 'Microsoft Engage Mentorship', company: 'Microsoft', type: 'Workshop',
     description: '6-week mentorship with Microsoft engineers. Build a real product and get career guidance.',
-    eligibleDepts: ['CSE', 'IT'], minCGPA: 7.0, minSemester: 3,
+    eligibleDepts: ['CSE', 'INSTRUMENTATION'], minCGPA: 7.0, minSemester: 3,
     requiredSkills: ['React.js'],
     preferredSkills: ['Node.js', 'Azure'],
     suitableFor: ['Placements', 'Higher Studies'],

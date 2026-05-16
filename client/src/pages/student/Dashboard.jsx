@@ -6,6 +6,7 @@ import { useSkills, useGoals, useProjects } from '../../hooks';
 import { analyticsAPI } from '../../services/api';
 import { levelFromXP, xpProgress, fmtDate, priorityColor, statusColor } from '../../utils';
 import { Link } from 'react-router-dom';
+import DashboardRecommendationWidget from '../../components/recommendations/DashboardWidget';
 
 const skillColors = {
   DSA: '#4f46e5',
@@ -78,6 +79,10 @@ export default function Dashboard() {
         <StatCard label="LeetCode solved" value={cs.leetcodeSolved || 0} change={12} className="card-offset" />
         <StatCard label="CF rating" value={cs.codeforcesRating || '—'} />
         <StatCard label="GitHub contributions" value={cs.githubContributions || 0} change={28} className="mt-0.5" />
+      </div>
+
+      <div className="mb-6">
+        <DashboardRecommendationWidget />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">

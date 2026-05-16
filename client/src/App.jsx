@@ -12,6 +12,7 @@ import Dashboard    from './pages/student/Dashboard';
 import SkillsGoals  from './pages/student/Skills';
 import Projects     from './pages/student/Projects';
 import Profile      from './pages/student/Profile';
+import Recommendations from './pages/student/Recommendations';
 import FacultyDashboard from './pages/staff/FacultyDashboard';
 import AdminDashboard   from './pages/staff/AdminDashboard';
 import Leaderboard   from './pages/shared/Leaderboard';
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/profile"   element={<PrivateRoute roles={['student']}><Profile /></PrivateRoute>} />
           <Route path="/skills"    element={<PrivateRoute roles={['student']}><SkillsGoals /></PrivateRoute>} />
           <Route path="/projects"  element={<PrivateRoute roles={['student']}><Projects /></PrivateRoute>} />
+          <Route path="/recommendations" element={<PrivateRoute roles={['student']}><Recommendations /></PrivateRoute>} />
 
           <Route path="/faculty"  element={<PrivateRoute roles={['faculty','admin']}><FacultyDashboard /></PrivateRoute>} />
           <Route path="/students" element={<PrivateRoute roles={['faculty','admin']}><FacultyDashboard /></PrivateRoute>} />

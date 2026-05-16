@@ -18,6 +18,28 @@
   ::selection { background: rgba(79,70,229,.25); }
 }
 
+/* Optional light theme — toggle via document.documentElement.dataset.theme = 'light' */
+html[data-theme='light'] body {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+html[data-theme='light'] .card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+html[data-theme='light'] .card-sm {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+html[data-theme='light'] .section-title {
+  color: #0f172a;
+}
+html[data-theme='light'] .input {
+  background: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
 @layer components {
   .card {
     @apply bg-[#10192f] border border-[#1e293b] p-5;

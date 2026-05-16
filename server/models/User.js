@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema({
   avatar:     { type: String, default: '' },
 
   // ── Academic (Students) ──────────────────────────────────────────────────────
-  department: { type: String, enum: ['CSE', 'ECE', 'IT', 'MECH', 'CIVIL', 'EEE', 'OTHER'], default: 'CSE' },
+  department: { type: String, enum: ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'OTHER'], default: 'CSE' },
   semester:   { type: Number, min: 1, max: 8 },
   rollNumber: { type: String, unique: true, sparse: true },
   cgpa:       { type: Number, min: 0, max: 10, default: 0 },

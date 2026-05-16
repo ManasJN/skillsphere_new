@@ -19,6 +19,8 @@ const Orbs = () => (
   </div>
 );
 
+const DEPARTMENTS = ['CSE', 'MECH', 'CIVIL', 'INSTRUMENTATION', 'ELECTRICAL', 'ELECTRONICS', 'CHEMICAL', 'OTHER'];
+
 // ── Login ─────────────────────────────────────────────────────────────────────
 export function Login() {
   const { login } = useAuth();
@@ -210,7 +212,7 @@ export function Register() {
 
           <div className="grid grid-cols-2 gap-3">
             <Select label="Department" value={form.department} onChange={set('department')}
-              options={['CSE','ECE','IT','MECH','CIVIL','EEE','OTHER'].map(v=>({value:v,label:v}))} />
+              options={DEPARTMENTS.map(v=>({value:v,label:v}))} />
             {form.role === 'student' && (
               <Select label="Semester" value={form.semester} onChange={set('semester')}
                 options={[1,2,3,4,5,6,7,8].map(v=>({value:v,label:`Sem ${v}`}))} />
