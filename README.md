@@ -1,287 +1,277 @@
-````md
-# ⬡ SkillSphere — Full-Stack Student Growth Tracking Platform
+# SkillSphere
 
-> **Track Skills. Build Growth. Shape Futures.**
+SkillSphere is a full-stack student growth tracking platform for students, faculty, and administrators. It combines skill tracking, project portfolios, coding analytics, goals, achievements, opportunity matching, notifications, leaderboards, and role-based dashboards in one web app.
 
-A complete full-stack web app with React frontend + Node.js/Express backend + MongoDB Atlas.
+## Tech Stack
 
----
+**Frontend**
 
-# 📁 Project Structure
+- React 18
+- React Router 6
+- Tailwind CSS
+- Framer Motion
+- Recharts
+- Axios
+- React Query
+- React Hot Toast
 
-```bash
-skillsphere/
-├── client/          ← React + Tailwind CSS frontend
-├── server/          ← Node.js + Express + MongoDB backend
-├── package.json     ← Root (runs both together)
-└── README.md
-````
+**Backend**
 
----
+- Node.js
+- Express
+- MongoDB with Mongoose
+- JWT authentication
+- Email OTP verification with Nodemailer
+- bcryptjs password hashing
+- Helmet, CORS, Morgan, and rate limiting
+- Multer file uploads
 
-# ✨ Features
+## Project Structure
 
-* JWT Authentication
-* Email OTP Verification System
-* Role-based Access Control (Student / Faculty / Admin)
-* Student Skill Tracking
-* Coding Profile Analytics
-* XP & Leaderboard System
-* Opportunities & Notifications
-* Protected Routes
-* MongoDB Atlas Cloud Database
-* Responsive Dark UI
-* Faculty & Admin Dashboards
+```txt
+skillsphere-full/
++-- client/          React frontend
++-- server/          Express API and MongoDB models
++-- package.json     Root scripts for install, dev, seed, and build
+`-- README.md
+```
 
----
+## Features
 
-# 🚀 Quick Setup (5 minutes)
+- Public landing, login, registration, and OTP verification
+- JWT-based auth with refresh tokens
+- Role-based access for students, faculty, and admins
+- Student dashboard for profile, skills, goals, projects, analytics, and recommendations
+- Faculty dashboard for student visibility and academic/career insights
+- Admin dashboard for platform-level management
+- Coding profile stats for LeetCode, Codeforces, and GitHub
+- XP, achievements, streaks, and leaderboards
+- Opportunity feed with student applications and matching
+- Notifications and broadcast announcements
+- Career recommendation profile, history, and generated guidance
 
-## 1. Install all dependencies
+## Prerequisites
+
+- Node.js 18 or newer
+- npm
+- MongoDB running locally or a MongoDB Atlas connection string
+- Gmail app password or SMTP-compatible credentials for OTP emails
+
+## Setup
+
+Install root dependencies and both app workspaces:
 
 ```bash
 npm install
 npm run install:all
 ```
 
----
-
-## 2. Configure the backend
+Create the backend environment file:
 
 ```bash
 cd server
 cp .env.example .env
 ```
 
-Edit `.env`:
+On Windows PowerShell, use:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Update `server/.env`:
 
 ```env
-MONGO_URI=your_mongodb_atlas_connection_string
-
-JWT_SECRET=your_secret_at_least_32_characters_long
-
-JWT_REFRESH_SECRET=another_secret_key_here
-
+PORT=5000
+NODE_ENV=development
+MONGO_URI=mongodb://localhost:27017/skillsphere
+JWT_SECRET=replace_with_a_long_random_secret
+JWT_EXPIRES_IN=7d
+JWT_REFRESH_SECRET=replace_with_another_long_random_secret
+JWT_REFRESH_EXPIRES_IN=30d
 CLIENT_URL=http://localhost:3000
-
-EMAIL_USER=your_gmail@gmail.com
-
+EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_gmail_app_password
 ```
 
----
-
-## 3. Seed the database
+Seed demo data:
 
 ```bash
 npm run seed
 ```
 
----
-
-## 4. Run both frontend + backend
+Start the frontend and backend together:
 
 ```bash
 npm run dev
 ```
 
-### URLs
+## Local URLs
 
-* Frontend → [http://localhost:3000](http://localhost:3000)
-* Backend API → [http://localhost:5000](http://localhost:5000)
-* API Health → [http://localhost:5000/api/health](http://localhost:5000/api/health)
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
+- Health check: http://localhost:5000/api/health
 
----
+## Demo Accounts
 
-# 🔑 Demo Accounts (after seeding)
+After running `npm run seed`, use these accounts:
 
-| Role    | Email                                         | Password     |
-| ------- | --------------------------------------------- | ------------ |
-| Student | [arjun@jec.ac.in](mailto:arjun@jec.ac.in)     | Student@1234 |
-| Student | [priya@jec.ac.in](mailto:priya@jec.ac.in)     | Student@1234 |
-| Faculty | [faculty@jec.ac.in](mailto:faculty@jec.ac.in) | Faculty@1234 |
-| Admin   | [admin@jec.ac.in](mailto:admin@jec.ac.in)     | Admin@1234   |
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@nit.edu` | `Admin@1234` |
+| Faculty | `faculty@nit.edu` | `Faculty@1234` |
+| Student | `arjun@nit.edu` | `Student@1234` |
+| Student | `priya@nit.edu` | `Student@1234` |
+| Student | `<student-first-name>@nit.edu` | `Student@1234` |
 
----
+The seeder creates ten student profiles with skills, goals, projects, opportunities, achievements, and notifications.
 
-# 🗂 Frontend Pages
+## Scripts
 
-| Route            | Page               | Access          |
-| ---------------- | ------------------ | --------------- |
-| `/`              | Landing Page       | Public          |
-| `/login`         | Login              | Public          |
-| `/register`      | Register           | Public          |
-| `/verify-otp`    | OTP Verification   | Public          |
-| `/dashboard`     | Student Dashboard  | Student         |
-| `/profile`       | My Profile         | Student         |
-| `/skills`        | Skills & Goals     | Student         |
-| `/projects`      | Project Portfolio  | Student         |
-| `/faculty`       | Faculty Dashboard  | Faculty + Admin |
-| `/admin`         | Admin Dashboard    | Admin           |
-| `/leaderboard`   | Leaderboard        | All             |
-| `/opportunities` | Opportunities Feed | All             |
-| `/analytics`     | Analytics          | All             |
-| `/notifications` | Notifications      | All             |
-| `/settings`      | Settings           | All             |
-
----
-
-# 🧩 Tech Stack
-
-## Frontend
-
-* React 18
-* React Router v6
-* Tailwind CSS
-* Framer Motion
-* Recharts
-* Axios
-* React Hot Toast
-
----
-
-## Backend
-
-* Node.js
-* Express.js
-* MongoDB Atlas + Mongoose
-* JWT Authentication
-* Email OTP Verification
-* bcryptjs Password Hashing
-* Express Rate Limiting
-* Helmet Security
-* Multer File Uploads
-
----
-
-# 📡 Key API Endpoints
+Run from the repository root:
 
 ```bash
-POST   /api/auth/register
-POST   /api/auth/verify-otp
-POST   /api/auth/login
-POST   /api/auth/refresh
-GET    /api/auth/me
-
-GET    /api/users
-GET    /api/users/:id
-PUT    /api/users/:id
-
-GET    /api/skills
-POST   /api/skills
-PUT    /api/skills/:id
-
-GET    /api/goals
-POST   /api/goals
-PUT    /api/goals/:id
-
-GET    /api/projects
-POST   /api/projects
-PUT    /api/projects/:id
-
-GET    /api/opportunities
-POST   /api/opportunities
-POST   /api/opportunities/:id/apply
-
-GET    /api/leaderboard?type=xp|cgpa|leetcode|codeforces
-
-GET    /api/analytics/my-stats
-GET    /api/analytics/overview
-
-GET    /api/notifications
-PUT    /api/notifications/mark-all-read
-POST   /api/notifications/broadcast
+npm run install:all   # install server and client dependencies
+npm run dev           # run server and client concurrently
+npm run server        # run only the Express server with nodemon
+npm run client        # run only the React client
+npm run seed          # seed MongoDB with demo data
+npm run build         # build the React app
 ```
 
----
-
-# ⚙️ Individual Commands
-
-## Run server only
+Server-only scripts from `server/`:
 
 ```bash
-npm run server
-```
-
-## Run client only
-
-```bash
-npm run client
-```
-
-## Seed database
-
-```bash
+npm run dev
+npm start
 npm run seed
 ```
 
-## Build for production
+Client-only scripts from `client/`:
 
 ```bash
+npm start
 npm run build
 ```
 
----
+## Frontend Routes
 
-# 🏗 Production Deployment
+| Route | Page | Access |
+| --- | --- | --- |
+| `/` | Landing or role dashboard redirect | Public/auth-aware |
+| `/login` | Login | Public |
+| `/register` | Register | Public |
+| `/verify-otp` | OTP verification | Public |
+| `/dashboard` | Student dashboard | Student |
+| `/profile` | Student profile | Student |
+| `/skills` | Skills and goals | Student |
+| `/projects` | Project portfolio | Student |
+| `/recommendations` | Career recommendations | Student |
+| `/faculty` | Faculty dashboard | Faculty, Admin |
+| `/students` | Student management view | Faculty, Admin |
+| `/admin` | Admin dashboard | Admin |
+| `/leaderboard` | Leaderboard | Authenticated users |
+| `/opportunities` | Opportunities | Authenticated users |
+| `/notifications` | Notifications | Authenticated users |
+| `/analytics` | Analytics | Authenticated users |
+| `/settings` | Settings | Authenticated users |
 
-## Build React App
+## API Overview
 
-```bash
-npm run build
-```
-
----
-
-## Serve Static Files from Express
-
-Add inside:
-
-```bash
-server/index.js
-```
-
-```js
-app.use(express.static(path.join(__dirname, '../client/build')));
-```
-
----
-
-## Run with PM2
-
-```bash
-npm install -g pm2
-
-cd server
-
-pm2 start index.js --name skillsphere
-```
-
----
-
-# 🔒 Authentication Flow
+Base URL: `http://localhost:5000/api`
 
 ```txt
-Register
-   ↓
-OTP sent to email
-   ↓
-Email Verification
-   ↓
-Login
-   ↓
-Dashboard Access
+GET    /health
+
+POST   /auth/register
+POST   /auth/verify-otp
+POST   /auth/login
+POST   /auth/refresh
+POST   /auth/logout
+GET    /auth/me
+PUT    /auth/profile
+
+GET    /users
+GET    /users/:id
+PUT    /users/:id
+DELETE /users/:id
+PUT    /users/:id/coding-stats
+PUT    /users/:id/import/leetcode
+PUT    /users/:id/import/github
+POST   /users/:id/certifications
+POST   /users/:id/showcase
+
+GET    /skills
+POST   /skills
+PUT    /skills/:id
+DELETE /skills/:id
+
+GET    /goals
+POST   /goals
+PUT    /goals/:id
+DELETE /goals/:id
+PUT    /goals/:id/milestones/:milestoneId/toggle
+
+GET    /projects
+POST   /projects
+PUT    /projects/:id
+DELETE /projects/:id
+POST   /projects/:id/like
+
+GET    /opportunities
+POST   /opportunities
+PUT    /opportunities/:id
+DELETE /opportunities/:id
+POST   /opportunities/:id/apply
+GET    /opportunities/:id/matched-students
+
+GET    /achievements
+GET    /achievements/my
+GET    /leaderboard
+GET    /leaderboard/department-summary
+
+GET    /analytics/my-stats
+GET    /analytics/overview
+GET    /analytics/skills-distribution
+GET    /analytics/aspirations
+GET    /analytics/coding-activity
+GET    /analytics/placement-readiness
+
+GET    /notifications
+PUT    /notifications/mark-all-read
+PUT    /notifications/:id/read
+POST   /notifications/broadcast
+
+GET    /recommendations/profile
+PUT    /recommendations/profile
+POST   /recommendations/generate
+GET    /recommendations/latest
+GET    /recommendations/history
+GET    /recommendations/dashboard-summary
 ```
 
----
+Most endpoints require an `Authorization: Bearer <token>` header after login.
 
-# 🏫 Built for Jorhat Engineering College (JEC)
+## Production Build
 
-SkillSphere is designed as a centralized student growth and skill tracking platform for JEC students, faculty members, and administrators.
+Build the React client:
 
----
-
-# ❤️ Built with Passion — SkillSphere v1.0
-
+```bash
+npm run build
 ```
+
+Start the API:
+
+```bash
+cd server
+npm start
 ```
+
+If you want Express to serve the built React app, add static serving in `server/index.js` and point it at `../client/build`.
+
+## Notes
+
+- The React client proxies API requests to `http://localhost:5000` in development.
+- Uploaded files are served from `/uploads`.
+- `npm run seed` clears existing seeded collections before inserting demo data.
+- Keep real secrets out of Git. Use `server/.env.example` as the template and store actual credentials in `server/.env`.
